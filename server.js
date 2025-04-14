@@ -25,75 +25,60 @@ app.post('/teller-proxy', async (req, res) => {
 
   const axios = require('axios');
 
-  axios.get('https://api.teller.io/accounts', {
-    auth: {
-      username: accessToken,
-      password: ''
-    }
-  })
-  .then(response => {
-    console.log('Response:', response.data);
+  try {
+    const accountsResponse = await axios.get('https://api.teller.io/accounts', {
+      auth: {
+        username: accessToken,
+        password: ''
+      }
+    });
+
+    console.log('Accounts Response:', accountsResponse.data);
     const accounts = [];
-    let acc_last_four;
-    let acc_subtype;
-    let acc_institution;
-    let acc_currency;
-    let acc_type;
-    let acc_status;
-    let acc_name;
-    let acc_id;
 
-    for (let i = 0; i < response.data.length; i++) {
-      acc_last_four = response.data[i].last_four;
-      acc_subtype = response.data[i].subtype; //Subtype: Checking, Savings, Credit Card
-      acc_institution = response.data[i].institution[0]; //Name of the institution
-      acc_currency = response.data[i].currency; //Currency of the account
-      acc_type = response.data[i].type; //Type: Debit, Credit
-      acc_status = response.data[i].status; //Status: Open, Closed
-      acc_name = response.data[i].name; //Name of the account
-      acc_id = response.data[i].id; //Account ID
+    async function getBalance(acc_id, accessToken) {
+      try {
+        const balanceResponse = await axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
+          auth: {
+            username: accessToken,
+            password: ''
+          }
+        });
+        console.log('Balance Response for ID:', acc_id, balanceResponse.data);
+        return balanceResponse.data.available;
+      } catch (balanceError) {
+        console.error('Error fetching balance for ID:', acc_id, balanceError);
+        return null; // Or handle the error as needed
+      }
     }
 
-    async function getBalance(acc_id, accessToken)
-    {
-      axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
-        auth: {
-          username: accessToken,
-          password: ''
-        }
-      })
-      .then(balance_response => {
-        console.log('Balance Response:', balance_response.data);
-        console.log("Available Balance:", balance_response.data.available);
-        return balance_response.data.available;
-      })
-      .catch(balance_error => {
-        console.error('Error:', balance_error);
+    // Make the .then() callback async
+    await Promise.all(accountsResponse.data.map(async (accountData) => {
+      const acc_id = accountData.id;
+      const balance = await getBalance(acc_id, accessToken);
+
+      accounts.push({
+        acc_last_four: accountData.last_four,
+        acc_subtype: accountData.subtype,
+        acc_institution: accountData.institution ? accountData.institution[0] : null,
+        acc_currency: accountData.currency,
+        acc_type: accountData.type,
+        acc_status: accountData.status,
+        acc_name: accountData.name,
+        acc_id: acc_id,
+        acc_balances: { available: balance },
+        acc_transactions: accountData.transactions,
+        acc_details: accountData.details
       });
-    };
-    
-    let acc_balance = getBalance(acc_id, accessToken)
-      .then(balance => {
-        console.log("Available Balance:", balance);
-        accounts.push({
-          acc_last_four: acc_last_four,
-          acc_subtype: acc_subtype,
-          acc_institution: acc_institution,
-          acc_currency: acc_currency,
-          acc_type: acc_type,
-          acc_status: acc_status,
-          acc_name: acc_name,
-          acc_id: acc_id,
-          acc_balance: balance
-        });
-      });
-    console.log("Accounts:", accounts);
+    }));
+
+    console.log("Accounts with Balances:", accounts);
     return res.json(accounts);
-  })
-  .catch(error => {
+
+  } catch (error) {
     console.error('Error:', error);
-    return res.json(error);
-  });
+    return res.status(500).json(error);
+  }
 });
 
 app.listen(process.env.PORT, () => {
