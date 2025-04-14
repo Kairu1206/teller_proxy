@@ -59,35 +59,9 @@ app.post('/teller-proxy', async (req, res) => {
       });
 
       let acc_transactions = [];
-      axios.get(`https://api.teller.io/accounts/${acc_id}/transactions`, {
-        auth: {
-          username: accessToken,
-          password: ''
-        }
-      })
-      .then(transactions_response => {
-        console.log('Transactions:', transactions_response.data);
-        for (let i = 0; i < transactions_response.data.length; i++) {
-          acc_transactions.push(transactions_response.data[i]);
-        }
-      })
-      .catch(transactions_error => {
-        console.error('Error:', transactions_error);
-      });
 
       let acc_details = [];
-      axios.get(`https://api.teller.io/accounts/${acc_id}/details`, {
-        auth: {
-          username: accessToken,
-          password: ''
-        }
-      })
-      .then(details_response => {
-        console.log('Details:', details_response.data);
-      })
-      .catch(details_error => {
-        console.error('Error:', details_error);
-      });
+      
 
       accounts.push({
         acc_last_four,
