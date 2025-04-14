@@ -67,7 +67,11 @@ const fetchAccountData = async (accountId) => {
 };
 
 app.post('/teller-proxy', async (req, res) => {
-  const { path = '/accounts' } = req.body;
+  const { path = '/accounts', accessToken } = req.body;
+
+  if (!accessToken) {
+    return res.status(400).json({ error: 'Missing access token' });
+  }
 
   const options = {
     hostname: 'api.teller.io',
@@ -76,6 +80,7 @@ app.post('/teller-proxy', async (req, res) => {
     key,
     cert,
     headers: {
+      'Authorization': `Bearer ${accessToken}`,  // Use the access token in the request headers
       'App-Id': process.env.APP_ID,
       'Accept': 'application/json'
     }
@@ -117,6 +122,7 @@ app.post('/teller-proxy', async (req, res) => {
 
   tellerReq.end();
 });
+
 
 https.createServer({ key, cert }, app)
   .listen(process.env.PORT, () =>
