@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const cert = process.env.CERTIFICATE;
-const key = process.env.PRIVATE_KEY;
+const key = fs.readFileSync('etc/secret/private_key.pem');
+const cert = fs.readFileSync('etc/secret/certificate.pem');
 
 const fetchAccountData = async (accountId) => {
   const endpoints = [
