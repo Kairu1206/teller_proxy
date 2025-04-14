@@ -37,8 +37,7 @@ app.post('/teller-proxy', async (req, res) => {
   };
 
   const request = https.request(options, (response) => {
-    console.log(response);
-    return res.status(response.statusCode).json(response);
+    return res.json(response);
   });
   request.end();
 });
