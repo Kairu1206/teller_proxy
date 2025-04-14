@@ -62,9 +62,8 @@ app.post('/teller-proxy', async (req, res) => {
         });
       };
       
-      let acc_balance = 0;
+      let acc_balance = getBalance(acc_id, accessToken);
       let acc_transactions = [];
-
       let acc_details = [];
       
 
