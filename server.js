@@ -42,7 +42,7 @@ app.post('/teller-proxy', async (req, res) => {
       const acc_type = response.data[i].type; //Type: Debit, Credit
       const acc_status = response.data[i].status; //Status: Open, Closed
       const acc_name = response.data[i].name; //Name of the account
-
+      const links = response.data[i].links;
       const acc_id = response.data[i].id; //Account ID
       let acc_balance = 0;
       axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
@@ -52,6 +52,7 @@ app.post('/teller-proxy', async (req, res) => {
         }
       })
       .then(balance_response => {
+        console.log('Balance Response:', balance_response.data);
         acc_balance = balance_response.data.available;
       })
       .catch(balance_error => {
