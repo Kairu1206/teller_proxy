@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const cert = fs.readFileSync('./teller/certificate.pem');
-const key = fs.readFileSync('./teller/private_key.pem');
+const cert = process.env.CERTIFICATE;
+const key = process.env.PRIVATE_KEY;
 
 app.post('/teller-proxy', async (req, res) => {
   const { path = '/accounts' } = req.body;
