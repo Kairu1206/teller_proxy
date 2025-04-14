@@ -61,7 +61,7 @@ app.post('/teller-proxy', async (req, res) => {
         });
       };
       
-      let acc_balance = async () => getBalance(acc_id, accessToken);
+      let acc_balance = getBalance(acc_id, accessToken);
       console.log("Acc Balance:", acc_balance);
       
 
