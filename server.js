@@ -44,7 +44,7 @@ app.post('/teller-proxy', async (req, res) => {
       const acc_name = response.data[i].name; //Name of the account
       const links = response.data[i].links;
       const acc_id = response.data[i].id; //Account ID
-      const acc_balance = async () => {
+      const getBalance = async () => {
         axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
           auth: {
             username: accessToken,
@@ -59,6 +59,8 @@ app.post('/teller-proxy', async (req, res) => {
           console.error('Error:', balance_error);
         });
       };
+      
+      const acc_balance = getBalance();
       
 
       let acc_transactions = [];
