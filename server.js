@@ -27,13 +27,51 @@ app.post('/teller-proxy', async (req, res) => {
 
   axios.get('https://api.teller.io/accounts', {
     auth: {
-      username: 'test_token_bo4xsmweqwwts',
-      password: '' // Empty password
+      username: accessToken,
+      password: ''
     }
   })
   .then(response => {
     console.log('Response:', response.data);
-    return res.json(response.data);
+    const accounts = [];
+    for (let i = 0; i < response.data.length; i++) {
+      const acc_last_four = response.data[i].last_four;
+      const acc_subtype = response.data[i].subtype; //Subtype: Checking, Savings, Credit Card
+      const acc_institution = response.data[i].institution[0]; //Name of the institution
+      const acc_currency = response.data[i].currency; //Currency of the account
+      const acc_type = response.data[i].type; //Type: Debit, Credit
+      const acc_status = response.data[i].status; //Status: Open, Closed
+      const acc_name = response.data[i].name; //Name of the account
+
+      const acc_id = response.data[i].id; //Account ID
+      let acc_balance = 0;
+      let acc_transactions = [];
+      let acc_details = [];
+      axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
+        auth: {
+          username: accessToken,
+          password: ''
+        }
+      })
+      .then(response => {
+        acc_balance = response.data;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+
+      accounts.push({
+        acc_last_four,
+        acc_subtype,
+        acc_institution,
+        acc_currency,
+        acc_type,
+        acc_status,
+        acc_name,
+      });
+
+    }
+    return res.json(accounts);
   })
   .catch(error => {
     console.error('Error:', error);
