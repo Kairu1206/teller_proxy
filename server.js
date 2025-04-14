@@ -28,6 +28,7 @@ const fetchAccountData = async (accountId) => {
       key,
       cert,
       headers: {
+        'Authorization': `Bearer ${accessToken}`,
         'App-Id': process.env.APP_ID,
         'Accept': 'application/json'
       }
