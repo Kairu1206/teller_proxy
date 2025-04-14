@@ -23,23 +23,21 @@ app.post('/teller-proxy', async (req, res) => {
     return res.status(400).json({ error: 'Missing access token' });
   }
 
-  const options = {
-    hostname: 'api.teller.io',
-    path: '/accounts',
-    method: 'GET',
-    key,
-    cert,
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,  // Use the access token in the request headers
-      'App-Id': process.env.APP_ID,
-      'Accept': 'application/json'
-    }
-  };
+  const axios = require('axios');
 
-  const request = https.request(options, (response) => {
-    return res.json(response);
+  axios.get('https://api.teller.io/accounts', {
+    auth: {
+      username: 'test_token_bo4xsmweqwwts',
+      password: '' // Empty password
+    }
+  })
+  .then(response => {
+    console.log('Response:', response.data);
+    // Process the response data here
+  })
+  .catch(error => {
+    console.error('Error:', error);
   });
-  request.end();
 });
 
 app.listen(process.env.PORT, () => {
