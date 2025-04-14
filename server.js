@@ -14,7 +14,7 @@ app.use(cors());
 const key = fs.readFileSync('./private_key.pem');
 const cert = fs.readFileSync('./certificate.pem');
 
-app.post('/teller-proxy', (req, res) => {
+app.post('/teller-proxy', async (req, res) => {
   const accessTokenObject = req.body;
   const accessToken = accessTokenObject.accessToken;
   console.log(accessToken);
@@ -37,14 +37,9 @@ app.post('/teller-proxy', (req, res) => {
   };
 
   const request = https.request(options, (response) => {
-    return res.status(response.statusCode).send(response);
+    console.log(response);
+    return res.status(response.statusCode).json(response);
   });
-
-  request.on('error', (error) => {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  });
-
   request.end();
 });
 
