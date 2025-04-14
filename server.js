@@ -87,7 +87,7 @@ app.post('/teller-proxy', async (req, res) => {
           acc_balance: balance
         });
       });
-
+    console.log("Accounts:", accounts);
     return res.json(accounts);
   })
   .catch(error => {
