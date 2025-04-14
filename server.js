@@ -33,10 +33,11 @@ app.post('/teller-proxy', async (req, res) => {
   })
   .then(response => {
     console.log('Response:', response.data);
-    // Process the response data here
+    return res.json(response.data);
   })
   .catch(error => {
     console.error('Error:', error);
+    return res.json(error);
   });
 });
 
