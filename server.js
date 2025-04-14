@@ -42,7 +42,6 @@ app.post('/teller-proxy', async (req, res) => {
       const acc_type = response.data[i].type; //Type: Debit, Credit
       const acc_status = response.data[i].status; //Status: Open, Closed
       const acc_name = response.data[i].name; //Name of the account
-      const links = response.data[i].links;
       const acc_id = response.data[i].id; //Account ID
   
       const getBalance = async (acc_id, accessToken) => {
@@ -62,9 +61,8 @@ app.post('/teller-proxy', async (req, res) => {
         });
       };
       
-      let acc_balance = getBalance(acc_id, accessToken);
-      let acc_transactions = [];
-      let acc_details = [];
+      let acc_balance = async () => getBalance(acc_id, accessToken);
+      console.log("Acc Balance:", acc_balance);
       
 
       accounts.push({
@@ -75,9 +73,7 @@ app.post('/teller-proxy', async (req, res) => {
         acc_type,
         acc_status,
         acc_name,
-        acc_balance,
-        acc_transactions,
-        acc_details
+        acc_balance
       });
 
     }
