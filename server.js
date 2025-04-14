@@ -54,22 +54,15 @@ app.post('/teller-proxy', async (req, res) => {
         })
         .then(balance_response => {
           console.log('Balance Response:', balance_response.data);
+          console.log("Available Balance:", balance_response.data.available);
           return balance_response.data.available;
         })
         .catch(balance_error => {
           console.error('Error:', balance_error);
         });
       };
-      const acc_balance = getBalance(acc_id, accessToken)
-      .then(acc_balance => {
-        console.log('Account Balance:', acc_balance);
-        return acc_balance;
-      })
-      .catch(error => {
-        console.error('Failed to get balance:', error);
-      });
       
-
+      let acc_balance = 0;
       let acc_transactions = [];
 
       let acc_details = [];
