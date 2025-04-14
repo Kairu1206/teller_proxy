@@ -51,11 +51,11 @@ app.post('/teller-proxy', async (req, res) => {
           password: ''
         }
       })
-      .then(response => {
-        console.log('Response:', response.data);
+      .then(balance_response => {
+        acc_balance = balance_response.data.available;
       })
-      .catch(error => {
-        console.error('Error:', error);
+      .catch(balance_error => {
+        console.error('Error:', balance_error);
       });
 
       let acc_transactions = [];
@@ -65,11 +65,14 @@ app.post('/teller-proxy', async (req, res) => {
           password: ''
         }
       })
-      .then(response => {
-        console.log('Response:', response.data);
+      .then(transactions_response => {
+        console.log('Transactions:', transactions_response.data);
+        for (let i = 0; i < transactions_response.data.length; i++) {
+          acc_transactions.push(transactions_response.data[i]);
+        }
       })
-      .catch(error => {
-        console.error('Error:', error);
+      .catch(transactions_error => {
+        console.error('Error:', transactions_error);
       });
 
       let acc_details = [];
@@ -79,11 +82,11 @@ app.post('/teller-proxy', async (req, res) => {
           password: ''
         }
       })
-      .then(response => {
-        console.log('Response:', response.data);
+      .then(details_response => {
+        console.log('Details:', details_response.data);
       })
-      .catch(error => {
-        console.error('Error:', error);
+      .catch(details_error => {
+        console.error('Error:', details_error);
       });
 
       accounts.push({
@@ -94,6 +97,9 @@ app.post('/teller-proxy', async (req, res) => {
         acc_type,
         acc_status,
         acc_name,
+        acc_balance,
+        acc_transactions,
+        acc_details
       });
 
     }
