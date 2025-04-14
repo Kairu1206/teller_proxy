@@ -1,5 +1,6 @@
 .env
 
-/teller
+certificate.pem
+private_key.pem
 
 file.txt
