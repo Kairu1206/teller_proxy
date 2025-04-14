@@ -44,20 +44,22 @@ app.post('/teller-proxy', async (req, res) => {
       const acc_name = response.data[i].name; //Name of the account
       const links = response.data[i].links;
       const acc_id = response.data[i].id; //Account ID
-      let acc_balance = 0;
-      axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
-        auth: {
-          username: accessToken,
-          password: ''
-        }
-      })
-      .then(balance_response => {
-        console.log('Balance Response:', balance_response.data);
-        acc_balance = balance_response.data.available;
-      })
-      .catch(balance_error => {
-        console.error('Error:', balance_error);
-      });
+      const acc_balance = async () => {
+        axios.get(`https://api.teller.io/accounts/${acc_id}/balances`, {
+          auth: {
+            username: accessToken,
+            password: ''
+          }
+        })
+        .then(balance_response => {
+          console.log('Balance Response:', balance_response.data);
+          return balance_response.data.available;
+        })
+        .catch(balance_error => {
+          console.error('Error:', balance_error);
+        });
+      };
+      
 
       let acc_transactions = [];
 
