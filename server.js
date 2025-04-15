@@ -60,13 +60,13 @@ app.post('/teller-proxy', async (req, res) => {
       accounts.push({
         acc_last_four: accountData.last_four,
         acc_subtype: accountData.subtype,
-        acc_institution: accountData.institution ? accountData.institution[0] : null,
+        acc_institution: accountData.institution,
         acc_currency: accountData.currency,
         acc_type: accountData.type,
         acc_status: accountData.status,
         acc_name: accountData.name,
         acc_id: acc_id,
-        acc_balances: { available: balance },
+        acc_balances: balance,
         acc_transactions: accountData.transactions,
         acc_details: accountData.details
       });
